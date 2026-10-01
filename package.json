@@ -1,0 +1,29 @@
+{
+  "name": "worldforge",
+  "productName": "WorldForge",
+  "version": "0.1.0",
+  "description": "Desktop app to build 3D worlds from scratch and import real-world 3D scans.",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "start:software": "electron . --use-angle=swiftshader --enable-unsafe-swiftshader",
+    "test": "node --test \"test/**/*.test.*\"",
+    "dist": "electron-builder"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.worldforge.app",
+    "files": ["src/**/*", "node_modules/three/build/**/*", "node_modules/three/examples/jsm/**/*", "node_modules/qrcode/**/*", "package.json"],
+    "linux": { "target": ["AppImage"] },
+    "win": { "target": ["nsis"] },
+    "mac": { "target": ["dmg"] }
+  }
+}

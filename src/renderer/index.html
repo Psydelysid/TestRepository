@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-oxe8QcV/1npQdg8sP3q/4T77OKBOhl5281ANMS7eUsw='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' data: blob: file:; worker-src 'self' blob:">
+  <title>WorldForge</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+{
+  "imports": {
+    "three": "../../node_modules/three/build/three.module.js",
+    "three/addons/": "../../node_modules/three/examples/jsm/"
+  }
+}
+  </script>
+</head>
+<body>
+  <header class="toolbar">
+    <div class="brand"><span class="logo">◆</span> WorldForge</div>
+    <div class="group">
+      <button data-action="new" title="New world (Ctrl+N)">New</button>
+      <button data-action="open" title="Open world (Ctrl+O)">Open</button>
+      <button data-action="save" title="Save world (Ctrl+S)">Save</button>
+      <button data-action="exportGlb" title="Export GLB (Ctrl+E)">Export</button>
+    </div>
+    <div class="group">
+      <button data-action="undo" id="btn-undo" title="Undo (Ctrl+Z)">↶</button>
+      <button data-action="redo" id="btn-redo" title="Redo (Ctrl+Shift+Z)">↷</button>
+    </div>
+    <div class="group" id="modes">
+      <button data-mode="translate" class="active" title="Move (W)">Move</button>
+      <button data-mode="rotate" title="Rotate (E)">Rotate</button>
+      <button data-mode="scale" title="Scale (R)">Scale</button>
+      <label class="check" title="Snap to grid"><input type="checkbox" id="snap"> Snap</label>
+    </div>
+    <div class="group">
+      <div class="dropdown">
+        <button class="primary">＋ Add ▾</button>
+        <div class="menu">
+          <div class="menu-title">Terrain</div>
+          <button data-add="terrain">Generated terrain</button>
+          <button data-add="plane">Flat ground</button>
+          <div class="menu-title">Shapes</div>
+          <button data-add="box">Box</button>
+          <button data-add="sphere">Sphere</button>
+          <button data-add="cylinder">Cylinder</button>
+          <button data-add="cone">Cone</button>
+          <button data-add="torus">Torus</button>
+          <div class="menu-title">Props</div>
+          <button data-add="tree">Tree</button>
+          <button data-add="rock">Rock</button>
+          <button data-add="house">House</button>
+          <div class="menu-title">Lights</div>
+          <button data-add="light:point">Point light</button>
+          <button data-add="light:spot">Spot light</button>
+          <button data-add="light:directional">Directional light</button>
+        </div>
+      </div>
+    </div>
+    <div class="group right">
+      <button data-action="import" title="Import scan file (Ctrl+I)">Import scan</button>
+      <button data-action="receiver" id="btn-receiver" class="accent" title="Receive scans from phones on your network">📡 Receive scans</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel" id="outliner-panel">
+      <h2>World</h2>
+      <ul id="outliner" class="outliner"></ul>
+    </aside>
+
+    <section id="viewport" class="viewport">
+      <div id="drop-overlay" class="drop-overlay">Drop scan files to import</div>
+      <div class="hint">Left-drag: orbit · Right-drag: pan · Wheel: zoom · Click: select · W/E/R: move/rotate/scale · F: focus</div>
+    </section>
+
+    <aside class="panel" id="properties-panel">
+      <h2 id="props-title">Environment</h2>
+      <div id="properties"></div>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span id="status">Ready</span>
+    <span id="receiver-status" class="muted">Scan receiver off</span>
+    <span id="stats" class="muted"></span>
+  </footer>
+
+  <dialog id="receiver-dialog">
+    <h2>Receive scans from the real world</h2>
+    <p>Scan a room, object or place with a phone app (Polycam, Scaniverse, 3d Scanner App, Kiri Engine, RealityScan…) and export it as <b>GLB, OBJ, PLY, STL, PCD or XYZ</b>. Then send it here:</p>
+    <div id="receiver-body"></div>
+    <div class="dialog-actions">
+      <button id="receiver-toggle" class="primary">Start receiver</button>
+      <button id="receiver-close">Close</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

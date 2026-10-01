@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Send scan to WorldForge</title>
+<style>
+  :root { color-scheme: dark; --bg:#14161b; --panel:#1e2129; --fg:#e8eaf0; --muted:#9aa1b1; --accent:#4f8cff; --ok:#3ecf8e; --err:#ff6b6b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--fg); padding:16px; }
+  main { max-width:480px; margin:0 auto; }
+  h1 { font-size:1.4rem; margin:.5rem 0 0; }
+  p { color:var(--muted); line-height:1.4; }
+  .drop { display:block; border:2px dashed #3a3f4d; border-radius:14px; padding:32px 16px; text-align:center; background:var(--panel); cursor:pointer; }
+  .drop strong { display:block; font-size:1.1rem; margin-bottom:6px; }
+  input[type=file] { display:none; }
+  ul { list-style:none; padding:0; }
+  li { background:var(--panel); border-radius:10px; padding:10px 12px; margin-top:8px; display:flex; justify-content:space-between; gap:8px; font-size:.95rem; word-break:break-all; }
+  .ok { color:var(--ok); } .err { color:var(--err); } .muted { color:var(--muted); }
+  small { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>WorldForge scan upload</h1>
+  <p>Export your scan from a LiDAR / photogrammetry app (Polycam, Scaniverse, 3d Scanner App, Kiri…) and pick the file here. It appears in the WorldForge scene right away.</p>
+  <label class="drop">
+    <strong>Tap to choose scan files</strong>
+    <small>GLB, GLTF, OBJ, PLY, STL, PCD, XYZ, PTS, TXT, CSV</small>
+    <input id="file" type="file" multiple>
+  </label>
+  <ul id="log"></ul>
+</main>
+<script>
+  const key = new URLSearchParams(location.search).get('k') || '';
+  const log = document.getElementById('log');
+  document.getElementById('file').addEventListener('change', async (e) => {
+    for (const file of e.target.files) await upload(file);
+    e.target.value = '';
+  });
+  async function upload(file) {
+    const li = document.createElement('li');
+    const name = document.createElement('span');
+    const state = document.createElement('span');
+    name.textContent = file.name;
+    state.textContent = 'sending…';
+    state.className = 'muted';
+    li.append(name, state);
+    log.prepend(li);
+    try {
+      const res = await fetch('/upload', {
+        method: 'POST',
+        headers: { 'X-Filename': encodeURIComponent(file.name), 'X-WorldForge-Key': key },
+        body: file,
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || res.statusText);
+      state.textContent = 'received ✓';
+      state.className = 'ok';
+    } catch (err) {
+      state.textContent = err.message;
+      state.className = 'err';
+    }
+  }
+</script>
+</body>
+</html>
